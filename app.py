@@ -1,5 +1,4 @@
 import re
-import gzip
 import requests
 
 from bs4 import BeautifulSoup
