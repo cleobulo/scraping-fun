@@ -1,6 +1,7 @@
 import re
 import requests
 import args
+import urllib.robotparser
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlsplit
@@ -15,13 +16,45 @@ NEXT_URL = ''
 TODO_URL_LIST = set()
 DONE_URL_LIST = set()
 
+# Cache de parsers de robots.txt por domínio
+ROBOTS_CACHE = {}
+USER_AGENT = 'MyScraperBotFun'
+
+def get_robot_parser(url):
+    """Obtém (ou cria) o parser de robots.txt para o domínio da URL."""
+    split_url = urlsplit(url)
+    domain = f"{split_url.scheme}://{split_url.netloc}"
+    
+    if domain in ROBOTS_CACHE:
+        return ROBOTS_CACHE[domain]
+    
+    robots_url = f"{domain}/robots.txt"
+    rp = urllib.robotparser.RobotFileParser()
+    rp.set_url(robots_url)
+    
+    try:
+        rp.read()
+    except Exception:
+        pass
+    
+    ROBOTS_CACHE[domain] = rp
+    
+    return rp
+
 def download_page(url):
     """    Faz o download da página HTML de uma URL.
     Se a URL já foi processada, não faz nada.
     """
     if url in DONE_URL_LIST:
         return ''
+    # Checa robots.txt antes de baixar
+    rp = get_robot_parser(url)
+    if rp and not rp.can_fetch(USER_AGENT, url):
+        print(f"Bloqueado por robots.txt: {url}")
+        DONE_URL_LIST.add(url)
+        return ''
     
+    # Faz o download da página
     page = requests.get(url)
     DONE_URL_LIST.add(url)
     
