@@ -3,3 +3,6 @@ venv/
 
 # Ignora arquivos de cache do Python
 __pycache__/
+
+# Ignora arquivo de banco de dados SQLite
+**.db
