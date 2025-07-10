@@ -5,7 +5,10 @@ import urllib.robotparser
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlsplit
+from datetime import datetime
+from database import create_db_and_tables, insert_page, SessionDep
 
+# ============================ Initial Setup
 # Define a profundidade máxima desejada
 MAX_DEPTH = 2 
 
@@ -20,6 +23,8 @@ DONE_URL_LIST = set()
 ROBOTS_CACHE = {}
 USER_AGENT = 'MyScraperBotFun'
 
+# ============================ Initial Setup - End
+# ============================ Functions
 def get_robot_parser(url):
     """Obtém (ou cria) o parser de robots.txt para o domínio da URL."""
     split_url = urlsplit(url)
@@ -63,6 +68,7 @@ def download_page(url):
     
     return page.text
 
+## ============================ Extract Data
 def extract_internal_links(html, next_url, depth):
     """    Extrai links internos de uma página HTML.
     Se a profundidade máxima for atingida, não faz nada.
@@ -98,6 +104,21 @@ def extract_external_links(html, next_url, depth):
                 if new_url not in DONE_URL_LIST:
                     TODO_URL_LIST.add((new_url, depth + 1))
 
+def extract_title(html):
+    """Extrai o título de uma página HTML."""
+    soup = BeautifulSoup(html, 'html.parser')
+    title = soup.title.string if soup.title else 'No Title'
+    print(f"Title extracted: {title}")
+    return title
+
+def extract_content(html):
+    """Extrai o conteúdo principal de uma página HTML."""
+    soup = BeautifulSoup(html, 'html.parser')
+    content = soup.get_text(separator=' ', strip=True)
+    print(f"Content extracted: {content[:100]}...")  # Print first 100 characters
+    return content
+
+## ============================ Extract Data - End
 def start_scraping():
     """    Inicia o processo de scraping, processando URLs na lista TODO_URL_LIST.
     Continua até que não haja mais URLs a serem processadas."""
@@ -109,7 +130,17 @@ def start_scraping():
             html = download_page(NEXT_URL)
             extract_internal_links(html, NEXT_URL, depth)
             extract_external_links(html, NEXT_URL, depth)
-            print(f"Scraped: {NEXT_URL} (depth {depth})")
+            # TODO: Save data in some database or file
+            # TODO: Save the current datetime too
+            page_title = extract_title(html)
+            page_content = extract_content(html)
+            page_scraped_at = datetime.now()
+            # Insert page into the database
+            with SessionDep() as session:
+                insert_page(session, NEXT_URL, page_title, page_content, page_scraped_at)
+            # Log the scraping action with timestamp
+            print(f"Scraped: {NEXT_URL} (depth {depth}) at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            print("==========================")
         except Exception as e:
             print(f"Erro ao processar {NEXT_URL}: {e}")
 
@@ -117,11 +148,14 @@ def main():
     try:
         seed_url = args.get_url_from_arg()
         TODO_URL_LIST.add((seed_url, 0))
+        create_db_and_tables()  # Ensure database and tables are created
         start_scraping()
     except KeyboardInterrupt:
         print('*')
         print('bye!')
 
+# ============================ Functions - End
+# ============================ Main Execution
 if __name__ == '__main__':
     main()
 else:
