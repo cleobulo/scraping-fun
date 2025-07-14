@@ -2,6 +2,7 @@ import re
 import requests
 import args
 import urllib.robotparser
+import json
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlsplit
@@ -22,6 +23,8 @@ DONE_URL_LIST = set()
 # Cache de parsers de robots.txt por domínio
 ROBOTS_CACHE = {}
 USER_AGENT = 'MyScraperBotFun'
+
+LIST_FILE = 'todo_list.json'
 
 # ============================ Initial Setup - End
 # ============================ Functions
@@ -119,6 +122,13 @@ def extract_content(html):
     return content
 
 ## ============================ Extract Data - End
+
+def save_todo_list():
+    """    Salva a lista de URLs a serem processadas em um arquivo.
+    Pode ser usado para persistência entre execuções."""
+    with open('todo_list.json', 'w', encoding='utf-8') as f:
+        json.dump(list(TODO_URL_LIST), f, indent=2, ensure_ascii=False)
+
 def start_scraping():
     """    Inicia o processo de scraping, processando URLs na lista TODO_URL_LIST.
     Continua até que não haja mais URLs a serem processadas."""
@@ -151,6 +161,7 @@ def main():
         create_db_and_tables()  # Ensure database and tables are created
         start_scraping()
     except KeyboardInterrupt:
+        save_todo_list()  # Save the current state of TODO_URL_LIST
         print('*')
         print('bye!')
 
