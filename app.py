@@ -1,6 +1,6 @@
 import re
 import requests
-import args
+import config
 import urllib.robotparser
 import json
 
@@ -156,7 +156,7 @@ def start_scraping():
 
 def main():
     try:
-        seed_url = args.get_url_from_arg()
+        seed_url = config.get_url_from_arg()
         TODO_URL_LIST.add((seed_url, 0))
         create_db_and_tables()  # Ensure database and tables are created
         start_scraping()

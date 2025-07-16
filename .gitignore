@@ -6,3 +6,6 @@ __pycache__/
 
 # Ignora arquivo de banco de dados SQLite
 **.db
+
+# Ignora arquivo .env
+.env
