@@ -7,3 +7,7 @@
 - execute `install_requirements.sh` for install dependencies
 - finally, run with cmd `python3 app.py`
 - (optional) if you want to stop application: `ctrl+c`
+
+### TODO
+
+- Load the URLs to download in the file created by the function trigged on `ctrl-c` (stop)
