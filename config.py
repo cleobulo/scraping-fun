@@ -6,7 +6,7 @@ import re
 # Load environment variables from .env file
 load_dotenv()
 
-def get_settings():
+def load_config():
     """    Obtém a URL inicial a partir de variáveis de ambiente.
     Valida o formato da URL e retorna a URL se for válida.
     """
