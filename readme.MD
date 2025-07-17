@@ -10,4 +10,5 @@
 
 ### TODO
 
-- Load the URLs to download in the file created by the function trigged on `ctrl-c` (stop)
+- Save the DONE_URL_LIST content in a JSON file, when stop the app on `ctrl-c`
+- Load the URLs downloaded in the file created by the function trigged on `ctrl-c` (stop)
