@@ -9,3 +9,6 @@ __pycache__/
 
 # Ignora arquivo .env
 .env
+
+# Ignora arquivos .json
+**.json

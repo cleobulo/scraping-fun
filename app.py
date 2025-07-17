@@ -3,11 +3,12 @@ import requests
 import config
 import urllib.robotparser
 import json
+import os
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlsplit
 from datetime import datetime
-from database import create_db_and_tables, insert_page, SessionDep
+from database import create_db_and_tables, insert_page, Session, engine
 
 # ============================ Initial Setup
 # Define a profundidade máxima desejada
@@ -129,6 +130,19 @@ def save_todo_list():
     with open('todo_list.json', 'w', encoding='utf-8') as f:
         json.dump(list(TODO_URL_LIST), f, indent=2, ensure_ascii=False)
 
+def load_todo_list():
+    """    Carrega a lista de URLs a serem processadas de um arquivo.
+    Pode ser usado para persistência entre execuções."""
+    try:
+        with open('todo_list.json', 'r', encoding='utf-8') as f:
+            urls = json.load(f)
+            for url, depth in urls:
+                TODO_URL_LIST.add((url, depth))
+    except FileNotFoundError:
+        print("Arquivo todo_list.json não encontrado. Iniciando com uma lista vazia.")
+    except json.JSONDecodeError:
+        print("Erro ao decodificar o arquivo todo_list.json. Iniciando com uma lista vazia.")
+
 def start_scraping():
     """    Inicia o processo de scraping, processando URLs na lista TODO_URL_LIST.
     Continua até que não haja mais URLs a serem processadas."""
@@ -140,13 +154,12 @@ def start_scraping():
             html = download_page(NEXT_URL)
             extract_internal_links(html, NEXT_URL, depth)
             extract_external_links(html, NEXT_URL, depth)
-            # TODO: Save data in some database or file
-            # TODO: Save the current datetime too
+            # Extract some data from the page
             page_title = extract_title(html)
             page_content = extract_content(html)
             page_scraped_at = datetime.now()
             # Insert page into the database
-            with SessionDep() as session:
+            with Session(engine) as session:
                 insert_page(session, NEXT_URL, page_title, page_content, page_scraped_at)
             # Log the scraping action with timestamp
             print(f"Scraped: {NEXT_URL} (depth {depth}) at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -156,9 +169,13 @@ def start_scraping():
 
 def main():
     try:
-        seed_url = config.load_config()
-        TODO_URL_LIST.add((seed_url, 0))
-        create_db_and_tables()  # Ensure database and tables are created
+        if not os.path.exists(LIST_FILE):
+            seed_url = config.load_config()
+            TODO_URL_LIST.add((seed_url, 0))
+            print(f"Starting scraping with seed URL: {seed_url}")
+        else:
+            load_todo_list()
+            
         start_scraping()
     except KeyboardInterrupt:
         save_todo_list()  # Save the current state of TODO_URL_LIST
@@ -168,6 +185,7 @@ def main():
 # ============================ Functions - End
 # ============================ Main Execution
 if __name__ == '__main__':
+    create_db_and_tables()  # Ensure database and tables are created
     main()
 else:
     print('This script is not meant to be imported as a module.')
