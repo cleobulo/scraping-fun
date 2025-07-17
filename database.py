@@ -1,5 +1,4 @@
 from sqlmodel import SQLModel, Field, create_engine, Session, select
-from typing_extensions import Annotated
 from datetime import datetime
 
 # ============================= Database Setup
@@ -20,15 +19,7 @@ class Page(SQLModel, table=True):
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
-def get_session():
-    with Session(engine) as session:
-        yield session
-
-## ============================= Session Dependency
-SessionDep = Annotated[Session, get_session]
-## ============================= Session Dependency - End
-
-def insert_page(session: SessionDep, url: str, title: str, content: str, scraped_at: datetime = None):
+def insert_page(session: Session, url: str, title: str, content: str, scraped_at: datetime = None):
     page = Page(url=url, title=title, content=content, scraped_at=scraped_at)
     session.add(page)
     session.commit()
