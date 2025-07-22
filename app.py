@@ -25,7 +25,8 @@ DONE_URL_LIST = set()
 ROBOTS_CACHE = {}
 USER_AGENT = 'MyScraperBotFun'
 
-LIST_FILE = 'todo_list.json'
+TODO_LIST_FILE = 'todo_list.json'
+DONE_LIST_FILE = 'done_list.json'
 
 # ============================ Initial Setup - End
 # ============================ Functions
@@ -124,24 +125,28 @@ def extract_content(html):
 
 ## ============================ Extract Data - End
 
-def save_todo_list():
+def save_urls_list(list_to_save, filename):
     """    Salva a lista de URLs a serem processadas em um arquivo.
     Pode ser usado para persistência entre execuções."""
-    with open('todo_list.json', 'w', encoding='utf-8') as f:
-        json.dump(list(TODO_URL_LIST), f, indent=2, ensure_ascii=False)
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(list(list_to_save), f, indent=2, ensure_ascii=False)
 
-def load_todo_list():
+def load_urls_list(filename):
     """    Carrega a lista de URLs a serem processadas de um arquivo.
     Pode ser usado para persistência entre execuções."""
     try:
-        with open('todo_list.json', 'r', encoding='utf-8') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             urls = json.load(f)
-            for url, depth in urls:
-                TODO_URL_LIST.add((url, depth))
+            if filename is TODO_LIST_FILE:
+                for url, depth in urls:
+                    TODO_URL_LIST.add((url, depth))
+            elif filename == DONE_LIST_FILE:
+                for url in urls:
+                    DONE_URL_LIST.add(url)
     except FileNotFoundError:
-        print("Arquivo todo_list.json não encontrado. Iniciando com uma lista vazia.")
+        print(f"Arquivo {filename} não encontrado. Iniciando com uma lista vazia.")
     except json.JSONDecodeError:
-        print("Erro ao decodificar o arquivo todo_list.json. Iniciando com uma lista vazia.")
+        print(f"Erro ao decodificar o arquivo {filename}. Iniciando com uma lista vazia.")
 
 def start_scraping():
     """    Inicia o processo de scraping, processando URLs na lista TODO_URL_LIST.
@@ -169,16 +174,18 @@ def start_scraping():
 
 def main():
     try:
-        if not os.path.exists(LIST_FILE):
+        if not os.path.exists(TODO_LIST_FILE):
             seed_url = config.load_config()
             TODO_URL_LIST.add((seed_url, 0))
             print(f"Starting scraping with seed URL: {seed_url}")
         else:
-            load_todo_list()
+            load_urls_list(DONE_LIST_FILE)
+            load_urls_list(TODO_LIST_FILE)
             
         start_scraping()
     except KeyboardInterrupt:
-        save_todo_list()  # Save the current state of TODO_URL_LIST
+        save_urls_list(TODO_URL_LIST, TODO_LIST_FILE)  # Save the current state of TODO_URL_LIST
+        save_urls_list(DONE_URL_LIST, DONE_LIST_FILE)  # Save the current state of DONE_URL_LIST
         print('*')
         print('bye!')
 
