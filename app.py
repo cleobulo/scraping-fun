@@ -4,6 +4,7 @@ import config
 import urllib.robotparser
 import json
 import os
+import time
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlsplit
@@ -63,6 +64,12 @@ def download_page(url):
         print(f"Bloqueado por robots.txt: {url}")
         DONE_URL_LIST.add(url)
         return ''
+    
+    # Respeitar crawl delay se especificado
+    crawl_delay = rp.crawl_delay(USER_AGENT) if rp else 2
+    crawl_delay = crawl_delay or 2
+
+    time.sleep(crawl_delay)
     
     # Faz o download da página
     page = requests.get(url)
