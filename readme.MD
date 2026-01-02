@@ -19,34 +19,26 @@ Um web crawler/scraper em Python que respeita `robots.txt`, limita profundidade 
 
 ## 🚀 Como Executar (Linux)
 
-### 1. Criar e Ativar Ambiente Virtual
+### 1. Configurar URL Inicial
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```
+SEED_URL=https://example.com
+```
+
+### 2. Executar o Scraper
+
+Execute o script `run.sh` que automaticamente:
+- Cria o ambiente virtual (se não existir)
+- Instala dependências
+- Executa o scraper
 
 ```bash
-source create_venv.sh
+bash run.sh
 ```
 
-### 2. Instalar Dependências
-
-```bash
-bash install_requirements.sh
-```
-
-### 3. Configurar URL Inicial
-
-Crie um arquivo `config.py` na raiz do projeto:
-
-```python
-def load_config():
-    return "https://example.com"
-```
-
-### 4. Executar o Scraper
-
-```bash
-python3 app.py
-```
-
-### 5. Parar a Aplicação
+### 3. Parar a Aplicação
 
 Pressione `Ctrl+C` para parar e salvar o estado atual.
 

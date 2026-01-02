@@ -174,6 +174,7 @@ def start_scraping():
             with Session(engine) as session:
                 insert_page(session, NEXT_URL, page_title, page_content, page_scraped_at)
             # Log the scraping action with timestamp
+            print("==========================")
             print(f"Scraped: {NEXT_URL} (depth {depth}) at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             print("==========================")
         except Exception as e:
