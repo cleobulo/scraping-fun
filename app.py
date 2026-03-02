@@ -43,3 +43,5 @@ try:
 except KeyboardInterrupt:
     print('*')
     print('bye!')
+    print('*')
+    print('Crawled URL count:', len(DONE_URL_LIST))
