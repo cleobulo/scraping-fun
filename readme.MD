@@ -99,3 +99,50 @@ python3 db_data.py
 - O scraper respeita o arquivo `robots.txt` de cada domínio visitado
 - As listas de TODO e DONE são salvas automaticamente ao interromper (Ctrl+C)
 - Ao reiniciar, o scraper continua de onde parou
+
+## 🚧 Futuras Implementações
+
+### 🧪 Qualidade & Confiabilidade (Prioridade Alta)
+
+- **Testes Automatizados**
+  - Unit tests para funções de extração de URLs
+  - Integration tests para fluxo do robots.txt
+  - Testes de persistência do banco de dados
+
+- **Melhor Tratamento de Erros**
+  - Retry logic com exponential backoff
+  - Timeout handling para requisições lentas
+  - Validação e sanitização de dados antes de salvar no BD
+  - Logging estruturado de erros
+
+### 📊 Operacional (Prioridade Alta)
+
+- **Sistema de Logging**
+  - Logs estruturados de execução, erros e progresso
+  - Facilita debugging e monitoramento em produção
+
+- **GitHub Actions CI/CD**
+  - Testes automatizados em cada push
+  - Validação de código (linting)
+  - Builds reproduzíveis
+
+### ⚡ Performance (Prioridade Média)
+
+- **Otimizações de Performance**
+  - Requisições assíncronas (aiohttp)
+  - Connection pooling
+  - Cache inteligente de robots.txt
+  - Paralelização de downloads
+
+### ✨ Features Novas (Prioridade Média)
+
+- **Filtros e Opções Avançadas**
+  - Filtrar por domínio
+  - Exclusão de tipos de arquivo
+  - Limites de tamanho
+  - Rate limiting configurável
+  - Padrões de exclusão de URLs
+
+- **Docker Setup**
+  - Dockerfile para containerização
+  - docker-compose para facilitar deployment
