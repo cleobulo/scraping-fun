@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, Field, create_engine, Session, select
 from datetime import datetime
 
 # ============================= Database Setup
-sql_file_name = 'database.db'
+sql_file_name = '../../data/database.db'
 sqlite_url = f'sqlite:///{sql_file_name}'
 connect_args = {'check_same_thread': False}
 engine = create_engine(sqlite_url, connect_args=connect_args)

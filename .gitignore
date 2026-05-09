@@ -4,14 +4,11 @@ venv/
 # Ignora arquivos de cache do Python
 __pycache__/
 
-# Ignora arquivo de banco de dados SQLite
-**.db
+# Ignora arquivos de dados (banco de dados e listas de TODO/DONE)
+data/
 
 # Ignora arquivo .env
 .env
-
-# Ignora arquivos .json
-**.json
 
 # Ignora arquivos tmpclaude
 tmpclaude-*-cwd

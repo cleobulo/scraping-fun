@@ -1,6 +1,11 @@
 #!/bin/bash
 # Script para executar o scraper com o ambiente virtual ativado
 
+# Obtém o diretório do script
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Navega para a raiz do projeto
+cd "$SCRIPT_DIR/.."
+
 # Verifica se o ambiente virtual existe
 if [ ! -d "venv" ]; then
     echo "Ambiente virtual não encontrado. Criando..."
@@ -17,7 +22,7 @@ pip install -r requirements.txt -q
 
 # Executa o scraper
 echo "Iniciando scraper..."
-python3 app.py
+python3 -m src.scraper.app
 
 # Desativa o ambiente virtual ao sair
 deactivate

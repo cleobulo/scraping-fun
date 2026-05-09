@@ -1,6 +1,6 @@
 import re
 import requests
-import config
+import config as config
 import urllib.robotparser
 import json
 import os
@@ -26,8 +26,8 @@ DONE_URL_LIST = set()
 ROBOTS_CACHE = {}
 USER_AGENT = 'MyScraperBotFun'
 
-TODO_LIST_FILE = 'todo_list.json'
-DONE_LIST_FILE = 'done_list.json'
+TODO_LIST_FILE = '../../data/todo_list.json'
+DONE_LIST_FILE = '../../data/done_list.json'
 
 # ============================ Initial Setup - End
 # ============================ Functions
@@ -202,6 +202,10 @@ def main():
 # ============================ Functions - End
 # ============================ Main Execution
 if __name__ == '__main__':
+    # TODO: Mover para um script de setup separado
+    if not os.path.exists('../../data'):
+        os.makedirs('../../data')
+
     create_db_and_tables()  # Ensure database and tables are created
     main()
 else:

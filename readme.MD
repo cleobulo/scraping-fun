@@ -46,17 +46,25 @@ Pressione `Ctrl+C` para parar e salvar o estado atual.
 
 ```
 scraping-fun/
-├── app.py                 # Script principal
-├── database.py            # Configuração do banco de dados
-├── config.py              # Configuração da URL inicial
-├── args.py                # Parser de argumentos
-├── create_venv.sh         # Script para criar ambiente virtual
-├── install_requirements.sh # Script para instalar dependências
-├── requirements.txt       # Dependências Python
-├── database.db            # Banco de dados SQLite
-├── todo_list.json         # Estado das URLs a processar
-├── done_list.json         # URLs já processadas
-└── readme.MD              # Este arquivo
+├── src/
+│   └── scraper/
+│       ├── __init__.py
+│       ├── app.py                # Script principal do scraper
+│       ├── config.py             # Carregamento de configurações
+│       ├── database.py           # Configuração do banco de dados e modelos
+│       └── db_data.py            # Utilitário para visualizar dados do banco
+├── scripts/
+│   └── run.sh                    # Script para executar o scraper
+├── data/                         # Pasta para dados gerados (ignorada pelo git)
+│   ├── database.db              # Banco de dados SQLite (gerado automaticamente)
+│   ├── todo_list.json           # Estado das URLs a processar (gerado)
+│   └── done_list.json           # URLs já processadas (gerado)
+├── requirements.txt             # Dependências Python
+├── .env                         # Arquivo de configuração (local, não commitado)
+├── .env-example                 # Exemplo de configuração
+├── .gitignore                   # Regras de ignore para Git
+├── readme.MD                    # Este arquivo
+└── LICENSE                      # Licença MIT
 ```
 
 ## ⚙️ Configuração
@@ -81,17 +89,18 @@ USER_AGENT = 'MyScraperBotFun'
 
 ### Via Python Script
 
-Execute o script `db_data.py`:
+Ative o ambiente virtual e execute:
 
 ```bash
-python3 db_data.py
+source venv/bin/activate
+python3 -m src.scraper.db_data
 ```
 
 ### Via DBeaver
 
 1. Abra o DBeaver
 2. Crie uma conexão SQLite
-3. Selecione o arquivo `database.db`
+3. Selecione o arquivo `data/database.db`
 4. Navegue até a tabela `page`
 
 ## 📝 Notas
