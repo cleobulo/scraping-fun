@@ -12,3 +12,6 @@ __pycache__/
 
 # Ignora arquivos .json
 **.json
+
+# Ignora arquivos tmpclaude
+tmpclaude-*-cwd
